@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BookTimeSlot</title>
+  </head>
+  <body>
+    <h1>Booking Time Slot</h1>
+    <div>
+      <label
+        >Time: <button onclick="time(event)">1pm</button> Available slots :
+        <span id="slot1">5</span></label
+      ><br />
+
+      <label
+        >Time: <button onclick="time(event)">2pm</button> Available slots :
+        <span id="slot2">5</span></label
+      ><br />
+
+      <label
+        >Time: <button onclick="time(event)">3pm</button> Available slots :
+        <span id="slot3">5</span></label
+      ><br />
+
+      <label
+        >Time: <button onclick="time(event)">4pm</button> Available slots :
+        <span id="slot4">5</span></label
+      ><br />
+
+      <label
+        >Time: <button onclick="time(event)">5pm</button> Available slots :
+        <span id="slot5">5</span></label
+      ><br />
+    </div>
+    <div id="list"></div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+      async function time(event) {
+        var slotElement = event.target.nextElementSibling;
+        var slotValue = parseInt(slotElement.innerText);
+        const availableSlots = 5;
+
+        if (slotValue > 0 && availableSlots <= slotValue) {
+          slotValue--;
+          slotElement.innerText = slotValue;
+
+          var name = prompt("Please enter your name:");
+          var email = prompt("Please enter your email:");
+
+          var requestData = {
+            time: event.target.innerText,
+            name: name,
+            emailId: email,
+          };
+
+          try {
+            const response = await axios.post(
+              "http://localhost:8000/booktimeslot",
+              requestData
+            );
+
+            alert("Your time slot has been booked successfully!");
+
+            const list = document.getElementById("list");
+            const listItems = document.createElement("li");
+            listItems.innerText = `Your slot is allotted at Time: ${requestData.time} Name: ${requestData.name} Email: ${requestData.emailId}`;
+
+            const cancelButton = document.createElement("button");
+            cancelButton.innerHTML = "Cancel";
+            cancelButton.addEventListener("click", async () => {
+              slotValue++;
+              slotElement.innerText = slotValue;
+
+              listItems.remove();
+
+              try {
+                const deleteResponse = await axios.delete(
+                  `http://localhost:8000/booktimeslot/${response.data.id}`
+                );
+
+                alert("Your time slot has been canceled successfully!");
+
+                const deletedData = deleteResponse.data;
+                console.log("Deleted data:", deletedData);
+              } catch (error) {
+                alert(
+                  "An error occurred while canceling your time slot: " +
+                    error.message
+                );
+              }
+            });
+
+            listItems.appendChild(cancelButton);
+            list.appendChild(listItems);
+          } catch (error) {
+            alert(
+              "An error occurred while booking your time slot: " + error.message
+            );
+          }
+        } else {
+          alert("No available slots for this time.");
+        }
+      }
+      // Function to retrieve and display previous data on the DOM
+      async function displayPreviousData() {
+        try {
+          const response = await axios.get(
+            "http://localhost:8000/booktimeslot"
+          );
+          const previousData = response.data;
+
+          const list = document.getElementById("list");
+
+          previousData.forEach((data) => {
+            const listItems = document.createElement("li");
+            listItems.innerText = `Your slot is allotted at Time: ${data.time} Name: ${data.name} Email: ${data.emailId}`;
+
+            const cancelButton = document.createElement("button");
+            cancelButton.innerHTML = "Cancel";
+            cancelButton.addEventListener("click", async () => {
+              try {
+                const deleteResponse = await axios.delete(
+                  `http://localhost:8000/booktimeslot/${data.id}`
+                );
+
+                alert("Your time slot has been canceled successfully!");
+
+                listItems.remove();
+
+                const deletedData = deleteResponse.data;
+                console.log("Deleted data:", deletedData);
+              } catch (error) {
+                alert(
+                  "An error occurred while canceling your time slot: " +
+                    error.message
+                );
+              }
+            });
+
+            listItems.appendChild(cancelButton);
+            list.appendChild(listItems);
+          });
+        } catch (error) {
+          alert(
+            "An error occurred while retrieving previous data: " + error.message
+          );
+        }
+      }
+
+      // Call the function to display previous data on page load
+      displayPreviousData();
+    </script>
+  </body>
+</html>

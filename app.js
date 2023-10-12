@@ -1,29 +1,32 @@
 const express = require("express");
 const cors = require("cors");
+const referrerPolicy = require("referrer-policy");
 const sequelize = require("./config/database");
-const slot = require("./models/slot");
+require("./models/slot");
 const bookingslot = require("./models/slot");
 
 const app = express();
-app.use(cors());
+app.use(referrerPolicy({ policy: "origin" }));
+app.use(
+  cors({
+    origin: "http://127.0.0.1:5500",
+    methods: ["GET", "POST", "DELETE"],
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//Get request
-app.get("/", async (req, res) => {
+app.get("/booktimeslot", async (req, res) => {
   try {
-    const getRequest = await bookingslot.findAll();
-    res.json({
-      status: "success",
-      data: getRequest,
-    });
+    const response = await bookingslot.findAll();
+    res.status(200).json(response);
   } catch (error) {
     console.log(error);
   }
 });
 
-//POST request
-app.post("/post", async (req, res) => {
+// Book a time slot
+app.post("/booktimeslot", async (req, res) => {
   try {
     const { time, name, emailId } = req.body;
     const postRequest = await bookingslot.create({
@@ -31,30 +34,23 @@ app.post("/post", async (req, res) => {
       name,
       emailId,
     });
-    res.status(200).json({ postRequest });
+
+    res.status(200).json(postRequest);
   } catch (error) {
     res.json({ message: "internal server error" });
   }
 });
 
-//Delete request
-app.delete("/post/delete/:id", async (req, res) => {
+app.delete("/booktimeslot/:id", async (req, res) => {
   try {
-    const deleteRequest = await bookingslot.destroy({
-      where: { id: req.params.id },
-    });
-
-    res.json({
-      status: "success",
-      data: "slot has been deleted",
-    });
-    console.log(deleteRequest);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    await bookingslot.destroy({ where: { id: req.params.id } });
+    res.json({ message: "bookingslot deleted" });
+  } catch (err) {
+    console.log(err);
   }
 });
-const PORT = process.env.PORT || 6000;
+
+const PORT = 8000;
 
 sequelize
   .sync()
