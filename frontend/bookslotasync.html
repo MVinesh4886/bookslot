@@ -4,34 +4,44 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BookTimeSlot</title>
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
+    <pre>
+      Given Task:
+      1.When the user selects a slot,he/she should register with name and email. 
+      2.Upon succesful registration,the value of the slot should get decreased. 
+      3.If the user cancels his/her slot then the values of slot should return to original values.
+      4.The details must be saved in database as well as on Dom.
+    </pre>
+
     <h1>Booking Time Slot</h1>
     <div>
       <label
         >Time: <button onclick="time(event)">1pm</button> Available slots :
-        <span id="slot1">5</span></label
+        <span id="slot1">10</span></label
       ><br />
-
+      <br />
       <label
         >Time: <button onclick="time(event)">2pm</button> Available slots :
-        <span id="slot2">5</span></label
+        <span id="slot2">10</span></label
       ><br />
-
+      <br />
       <label
         >Time: <button onclick="time(event)">3pm</button> Available slots :
-        <span id="slot3">5</span></label
+        <span id="slot3">10</span></label
       ><br />
-
+      <br />
       <label
         >Time: <button onclick="time(event)">4pm</button> Available slots :
-        <span id="slot4">5</span></label
+        <span id="slot4">10</span></label
       ><br />
-
+      <br />
       <label
         >Time: <button onclick="time(event)">5pm</button> Available slots :
-        <span id="slot5">5</span></label
+        <span id="slot5">10</span></label
       ><br />
+      <br />
     </div>
     <div id="list"></div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -40,7 +50,7 @@
       async function time(event) {
         var slotElement = event.target.nextElementSibling;
         var slotValue = parseInt(slotElement.innerText);
-        const availableSlots = 5;
+        const availableSlots = 10;
 
         if (slotValue > 0 && availableSlots <= slotValue) {
           slotValue--;

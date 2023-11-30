@@ -1,15 +1,16 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const referrerPolicy = require("referrer-policy");
 const sequelize = require("./config/database");
-require("./models/slot");
+
 const bookingslot = require("./models/slot");
 
 const app = express();
 app.use(referrerPolicy({ policy: "origin" }));
 app.use(
   cors({
-    origin: "http://127.0.0.1:5500",
+    origin: "http://127.0.0.1:5501",
     methods: ["GET", "POST", "DELETE"],
   })
 );
@@ -41,6 +42,7 @@ app.post("/booktimeslot", async (req, res) => {
   }
 });
 
+//cancel the time slot
 app.delete("/booktimeslot/:id", async (req, res) => {
   try {
     await bookingslot.destroy({ where: { id: req.params.id } });
@@ -50,14 +52,14 @@ app.delete("/booktimeslot/:id", async (req, res) => {
   }
 });
 
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
 sequelize
   .sync()
   .then((result) => {
     // console.log(result);
+    app.listen(PORT, () => {
+      console.log(`Server is running on Port ${PORT}`);
+    });
   })
   .catch((error) => console.log(error));
-app.listen(PORT, () => {
-  console.log(`Server is running on Port ${PORT}`);
-});

@@ -1,0 +1,22 @@
+button:hover {
+  padding: 2px;
+  background-color: rgb(238, 28, 9);
+  color: white;
+}
+label {
+  text-align: center;
+  background-color: rgb(230, 241, 219);
+}
+span {
+  background-color: rgb(23, 195, 69);
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  padding: 2px;
+}
+pre {
+  color: rgb(41, 31, 240);
+}
+h1 {
+  background-color: rgb(234, 85, 174);
+  width: 25%;
+  text-align: center;
+}
